@@ -1,15 +1,23 @@
 package bots.telegram.BarBot.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.Data;
 
-@Setter
-@Getter
-@Entity(name = "groupsDataTable")
+import java.util.List;
+
+@Entity
+@Table(name = "group_data")
+@Data
 public class Group {
     @Id
+    @Column(name = "group_id")
     private Long groupId;
+
+    @Column(name = "title")
     private String title;
+
+    @OneToMany(mappedBy = "pk.group_id",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private List<UserGroup> userGroupList;
 }
