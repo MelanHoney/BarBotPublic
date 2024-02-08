@@ -1,6 +1,7 @@
 package bots.telegram.BarBot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -9,6 +10,7 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 @Embeddable
+@Data
 public class UserGroupPK implements Serializable {
 
     @ManyToOne

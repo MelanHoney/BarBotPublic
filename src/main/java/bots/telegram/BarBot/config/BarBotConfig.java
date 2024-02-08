@@ -16,5 +16,4 @@ public class BarBotConfig {
     @Value("${bot.token}")
     String token;
 
-
 }
