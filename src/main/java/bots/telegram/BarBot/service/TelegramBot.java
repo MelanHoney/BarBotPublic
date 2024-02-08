@@ -2,6 +2,7 @@ package bots.telegram.BarBot.service;
 
 import bots.telegram.BarBot.config.BarBotConfig;
 import bots.telegram.BarBot.model.*;
+import org.glassfish.grizzly.http.server.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -15,6 +16,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -54,7 +57,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (update.getMessage().getChat().getType().equals("group")) {
                 processGroupUpdate(update);
             } else {
-                prepareMessage(update, "To start using bot invite it to your group");
+                prepareMessage(update.getMessage().getChatId(), "Чтобы начать пользоваться ботом добавьте его в групповой чат.");
             }
 
         }
@@ -66,6 +69,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (text.startsWith("барбот")) {
             switch (text) {
                 case "барбот кок":
+                    updateCock(update.getMessage());
                     break;
             }
         }
@@ -111,7 +115,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         userGroupPK.setGroup_id(message.getChatId());
         userGroupPK.setUser_id(message.getFrom().getId());
 
-        if(userGroupRepository.findById(userGroupPK).isEmpty()) {
+        if(!userGroupRepository.existsById(userGroupPK)) {
 
             UserGroup userGroup = new UserGroup();
 
@@ -119,6 +123,11 @@ public class TelegramBot extends TelegramLongPollingBot {
             userGroup.setCockSize(0);
 
             userGroupRepository.save(userGroup);
+
+            prepareMessage(message.getChatId(), message.getFrom().getFirstName() + ", ты успешно зарегистрировался! \n" +
+                    "Напиши барбот помощь чтобы узнать доступные команды");
+        } else {
+            prepareMessage(message.getChatId(), "Братанчик, ты уже зарегистрирован. Напиши барбот помощь, чтобы узнать все доступные команды.");
         }
     }
 
@@ -130,11 +139,79 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void prepareMessage(Update update, String text) {
+    private void prepareMessage(Long chatId, String text) {
         SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId());
+        message.setChatId(chatId);
         message.setText(text);
         sendMessage(message);
+    }
+
+    private void updateCock(Message message) {
+        UserGroupPK userGroupPK = new UserGroupPK();
+
+        userGroupPK.setUser_id(message.getFrom().getId());
+        userGroupPK.setGroup_id(message.getChatId());
+
+        if (userGroupRepository.findById(userGroupPK).isEmpty()) {
+            prepareMessage(message.getChatId(), "Братанчик, ты еще не зарегистрирован. Напиши /start для регистрации.");
+        } else {
+            UserGroup userGroup = userGroupRepository.findById(userGroupPK).get();
+
+            String operation = randomCockOperation();
+
+            Random random = new Random();
+            int lengthUpdate = random.nextInt(30);
+
+            switch (operation) {
+                case "delete":
+                    userGroup.setCockSize(0);
+                    prepareMessage(message.getChatId(),
+                            message.getFrom().getFirstName() + ", твiй песюн вiдвалився!\n" +
+                            "Тепер його довжина 0 см.");
+                    break;
+                case "minus":
+                    if (userGroup.getCockSize() < lengthUpdate) {
+                        userGroup.setCockSize(0);
+                        prepareMessage(message.getChatId(),
+                                message.getFrom().getFirstName() + " твiй песюн сокротився на "
+                                        + lengthUpdate + " см.\n" +
+                                        "Тепер його довжина " + userGroup.getCockSize() + " см.");
+                    } else {
+                        userGroup.setCockSize(userGroup.getCockSize() - lengthUpdate);
+                        prepareMessage(message.getChatId(),
+                                message.getFrom().getFirstName() + " твiй песюн сокротився на "
+                                        + lengthUpdate + " см.\n" +
+                                        "Тепер його довжина " + userGroup.getCockSize() + " см.");
+                    }
+                    break;
+                case "plus":
+                    userGroup.setCockSize(userGroup.getCockSize() + lengthUpdate);
+                    prepareMessage(message.getChatId(),
+                            message.getFrom().getFirstName() + ", твiй песюн вирiс на "
+                                    + lengthUpdate + " см.\n"
+                                    + "Тепер його довжина " + userGroup.getCockSize() + " см.");
+                    break;
+                default:
+                    break;
+            }
+
+            userGroupRepository.save(userGroup);
+        }
+    }
+
+    private String randomCockOperation() {
+        Random random = new Random();
+        int randomNumber = random.nextInt(100);
+        String operation = "";
+
+        if (randomNumber < 5) {
+            operation = "delete";
+        } else if (randomNumber < 45) {
+            operation = "minus";
+        } else {
+            operation = "plus";
+        }
+        return operation;
     }
 
 }
