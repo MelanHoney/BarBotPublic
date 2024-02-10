@@ -5,7 +5,9 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.hibernate.annotations.Formula;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @Entity
@@ -20,5 +22,6 @@ public class UserGroup {
     private int cockSize;
 
     @Column(name = "last_cock_update")
-    private Date lastCockUpdate;
+    private Date lastCockUpdate = new Date(10, Calendar.JANUARY, 1);
+
 }
