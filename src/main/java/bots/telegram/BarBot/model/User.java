@@ -16,6 +16,9 @@ public class User {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "second_name")
+    private String second_name;
+
     @OneToMany(mappedBy = "pk.user_id",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)

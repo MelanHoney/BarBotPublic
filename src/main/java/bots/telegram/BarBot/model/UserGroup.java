@@ -24,4 +24,6 @@ public class UserGroup {
     @Column(name = "last_cock_update")
     private Date lastCockUpdate = new Date(10, Calendar.JANUARY, 1);
 
+    @Column(name = "nickname")
+    private String nickname;
 }
