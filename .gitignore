@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+
 ### STS ###
 .apt_generated
 .classpath
@@ -15,7 +16,6 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.properties
 .idea
 *.iws
 *.iml
@@ -33,3 +33,4 @@ build/
 
 ### VS Code ###
 .vscode/
+!/src/main/resources/

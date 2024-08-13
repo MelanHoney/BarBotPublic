@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>bots.telegram</groupId>
 	<artifactId>BarBot</artifactId>
-	<version>1.6</version>
+	<version>1.6.2</version>
 	<name>BarBot</name>
 	<description>barbot cock</description>
 	<properties>
