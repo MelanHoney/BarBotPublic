@@ -9,23 +9,26 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "user_data")
+@Table(name = "group_data")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User {
+public class Chat {
     @Id
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "group_id")
+    private Long chatId;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "title")
+    private String title;
 
-    @Column(name = "second_name")
-    private String secondName;
+    @Column(name = "type")
+    private String type;
 
-    @OneToMany(mappedBy = "pk.userId",
+    @Column(name = "total_cock_size")
+    private int totalCockSize;
+
+    @OneToMany(mappedBy = "pk.groupId",
             fetch = FetchType.LAZY)
     private List<UserChat> userChatList;
 }

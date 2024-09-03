@@ -1,6 +1,6 @@
 package bots.telegram.BarBot.config;
 
-import bots.telegram.BarBot.service.TelegramBot;
+import bots.telegram.BarBot.controller.TelegramBot;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
