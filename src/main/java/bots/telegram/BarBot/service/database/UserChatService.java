@@ -25,7 +25,7 @@ public class UserChatService {
 
     public List<UserChatDto> findAllByChatId(Long groupId) {
         return userChatMapper.mapToDtoList(userChatRepository.findAllByPkGroupIdOrderByCockSizeDesc(groupId));
-    };
+    }
 
     public UserChatDto save(UserChatDto userChatDto) {
         userChatRepository.save(userChatMapper.mapToEntity(userChatDto));
