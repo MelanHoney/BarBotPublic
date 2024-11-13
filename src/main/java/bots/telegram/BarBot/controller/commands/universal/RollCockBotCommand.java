@@ -1,7 +1,7 @@
-package bots.telegram.BarBot.controller.botcommands.universal;
+package bots.telegram.BarBot.controller.commands.universal;
 
-import bots.telegram.BarBot.controller.botcommands.BarBotCommand;
-import bots.telegram.BarBot.controller.botcommands.universal.rollcock.OperationRandomizer;
+import bots.telegram.BarBot.controller.commands.BarBotCommand;
+import bots.telegram.BarBot.controller.commands.universal.rollcock.OperationRandomizer;
 import bots.telegram.BarBot.dto.ChatDto;
 import bots.telegram.BarBot.dto.UserChatDto;
 import bots.telegram.BarBot.service.SendMessageService;

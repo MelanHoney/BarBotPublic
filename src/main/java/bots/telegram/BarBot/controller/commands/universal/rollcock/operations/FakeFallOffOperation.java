@@ -1,4 +1,4 @@
-package bots.telegram.BarBot.controller.botcommands.universal.rollcock.operations;
+package bots.telegram.BarBot.controller.commands.universal.rollcock.operations;
 
 import bots.telegram.BarBot.dto.ChatDto;
 import bots.telegram.BarBot.dto.UserChatDto;

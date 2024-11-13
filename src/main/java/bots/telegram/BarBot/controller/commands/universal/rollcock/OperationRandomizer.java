@@ -1,7 +1,7 @@
-package bots.telegram.BarBot.controller.botcommands.universal.rollcock;
+package bots.telegram.BarBot.controller.commands.universal.rollcock;
 
-import bots.telegram.BarBot.controller.botcommands.universal.rollcock.cocktypes.CockTypes;
-import bots.telegram.BarBot.controller.botcommands.universal.rollcock.operations.*;
+import bots.telegram.BarBot.controller.commands.universal.rollcock.cocktypes.CockTypes;
+import bots.telegram.BarBot.controller.commands.universal.rollcock.operations.*;
 import bots.telegram.BarBot.dto.ChatDto;
 import bots.telegram.BarBot.dto.UserChatDto;
 import bots.telegram.BarBot.utility.CommandResponse;

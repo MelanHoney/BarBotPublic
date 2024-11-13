@@ -1,9 +1,9 @@
-package bots.telegram.BarBot.controller.botcommands.universal;
+package bots.telegram.BarBot.controller.commands.universal;
 
-import bots.telegram.BarBot.controller.botcommands.BarBotCommand;
-import bots.telegram.BarBot.dto.ChatDto;
+import bots.telegram.BarBot.controller.commands.BarBotCommand;
+import bots.telegram.BarBot.dto.UserChatDto;
 import bots.telegram.BarBot.service.SendMessageService;
-import bots.telegram.BarBot.service.database.ChatService;
+import bots.telegram.BarBot.service.database.UserChatService;
 import bots.telegram.BarBot.utility.CommandResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,11 +15,11 @@ import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class GetGroupTopBotCommand extends BarBotCommand {
+public class GetTopBotCommand extends BarBotCommand {
     private final SendMessageService sendMessageService;
-    private final ChatService chatService;
+    private final UserChatService userChatService;
     private Message message;
-    private List<ChatDto> topChatsDto;
+    private List<UserChatDto> userChatDtoTop;
     private StringBuilder responseMessage;
 
     @Override
@@ -32,16 +32,24 @@ public class GetGroupTopBotCommand extends BarBotCommand {
     private void initFields(Message message) {
         this.message = message;
         responseMessage = new StringBuilder();
-        topChatsDto = chatService.findTopTenByTotalCock();
+        userChatDtoTop = userChatService.findTop10Cocks();
     }
 
     private void buildTop() {
-        responseMessage.append("Топ 10 величайших чатов:\n\n");
-        for (ChatDto dto : topChatsDto) {
-            responseMessage.append("%d. %s - %d см\n".
-                    formatted(topChatsDto.indexOf(dto) + 1, dto.title(), dto.totalCockSize())
-            );
+        responseMessage.append("Топ 10 коков планеты:\n\n");
+        addTenUsersFromTop();
+    }
+
+    private void addTenUsersFromTop() {
+        for (UserChatDto dto : userChatDtoTop) {
+            addUserTopLine(dto);
         }
+    }
+
+    private void addUserTopLine(UserChatDto dto) {
+        responseMessage.append("%d. %s - %d см\n".
+                formatted(userChatDtoTop.indexOf(dto) + 1, dto.nickname(), dto.cockSize())
+        );
     }
 
     private CommandResponse makeResponseMessage() {

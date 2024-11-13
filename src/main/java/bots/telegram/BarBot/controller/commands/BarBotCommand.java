@@ -1,4 +1,4 @@
-package bots.telegram.BarBot.controller.botcommands;
+package bots.telegram.BarBot.controller.commands;
 
 import bots.telegram.BarBot.utility.CommandResponse;
 import org.telegram.telegrambots.meta.api.objects.Message;

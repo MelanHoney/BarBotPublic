@@ -1,8 +1,8 @@
 package bots.telegram.BarBot.controller;
 
 import bots.telegram.BarBot.config.BarBotConfig;
-import bots.telegram.BarBot.controller.botcommands.BarBotCommandsFactory;
-import bots.telegram.BarBot.controller.botcommands.universal.RegistrationBotCommand;
+import bots.telegram.BarBot.controller.commands.BarBotCommandsFactory;
+import bots.telegram.BarBot.controller.commands.universal.RegistrationBotCommand;
 import bots.telegram.BarBot.service.SendMessageService;
 import bots.telegram.BarBot.utility.CommandResponse;
 import bots.telegram.BarBot.utility.LoggingUtil;
@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     private final BarBotConfig barBotConfig;
-    private final SendMessageService sendMessageService;
     private final RegistrationBotCommand registrationBotCommand;
     private final BarBotCommandsFactory barBotCommandsFactory;
     private Message message;
@@ -41,7 +40,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     public TelegramBot(BarBotConfig barBotConfig, SendMessageService sendMessageService, RegistrationBotCommand registrationBotCommand, BarBotCommandsFactory barBotCommandsFactory) {
         this.barBotConfig = barBotConfig;
-        this.sendMessageService = sendMessageService;
         this.registrationBotCommand = registrationBotCommand;
         this.barBotCommandsFactory = barBotCommandsFactory;
         List<BotCommand> listOfCommands = new ArrayList<>();
@@ -55,8 +53,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        this.message = update.getMessage();
         if(hasMessageAndText(update) && !isMessageFromBot(update)) {
+            this.message = update.getMessage();
             var type = update.getMessage().getChat().getType();
             if (type.equals("group") || type.equals("supergroup")) {
                 processGroupUpdate(update).forEach(this::sendMessage);
@@ -68,7 +66,11 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private boolean isMessageFromBot(Update update) {
+    public boolean hasMessageAndText(Update update) {
+        return update.hasMessage() && update.getMessage().hasText();
+    }
+
+    public boolean isMessageFromBot(Update update) {
         if (update.getMessage().getFrom().getIsBot()) {
             LoggingUtil.logMessageFromBot(update.getMessage());
             return true;
@@ -77,11 +79,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private boolean hasMessageAndText(Update update) {
-        return update.hasMessage() && update.getMessage().hasText();
-    }
-
-    private Stream<CommandResponse> processGroupUpdate (Update update) {
+    public Stream<CommandResponse> processGroupUpdate (Update update) {
         String command = update.getMessage().getText();
         String lowerCaseCommand = command.toLowerCase();
 
@@ -96,7 +94,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         return Stream.empty();
     }
 
-    private Stream<CommandResponse> processPrivateChatUpdate(Update update) {
+    public Stream<CommandResponse> processPrivateChatUpdate(Update update) {
         String command = update.getMessage().getText();
         String lowerCaseCommand = command.toLowerCase();
 
@@ -111,7 +109,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         return Stream.empty();
     }
 
-    private void sendMessage(CommandResponse response) {
+    public void sendMessage(CommandResponse response) {
         try {
             this.execute(response.message());
             Thread.sleep(response.delay());

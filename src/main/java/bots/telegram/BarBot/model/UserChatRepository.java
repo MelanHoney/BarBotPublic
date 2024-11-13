@@ -9,9 +9,9 @@ import java.util.Optional;
 @Repository
 public interface UserChatRepository extends CrudRepository<UserChat, UserChatPK> {
 
+    Optional<UserChat> findByPkUserIdAndPkGroupId(Long userId, Long chatId);
+
     List<UserChat> findTop10ByOrderByCockSizeDesc();
 
     List<UserChat> findAllByPkGroupIdOrderByCockSizeDesc(Long chatId);
-
-    Optional<UserChat> findByPkUserIdAndPkGroupId(Long userId, Long chatId);
 }

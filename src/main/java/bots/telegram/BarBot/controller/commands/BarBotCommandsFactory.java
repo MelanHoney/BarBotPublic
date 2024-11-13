@@ -1,6 +1,6 @@
-package bots.telegram.BarBot.controller.botcommands;
+package bots.telegram.BarBot.controller.commands;
 
-import bots.telegram.BarBot.controller.botcommands.universal.*;
+import bots.telegram.BarBot.controller.commands.universal.*;
 import bots.telegram.BarBot.utility.CommandResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

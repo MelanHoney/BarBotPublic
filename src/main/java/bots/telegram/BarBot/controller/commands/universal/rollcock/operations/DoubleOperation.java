@@ -1,9 +1,10 @@
-package bots.telegram.BarBot.controller.botcommands.universal.rollcock.operations;
+package bots.telegram.BarBot.controller.commands.universal.rollcock.operations;
 
 import bots.telegram.BarBot.dto.ChatDto;
 import bots.telegram.BarBot.dto.UserChatDto;
 import bots.telegram.BarBot.service.SendMessageService;
 import bots.telegram.BarBot.service.database.ChatService;
+import bots.telegram.BarBot.service.database.RecordEntityService;
 import bots.telegram.BarBot.service.database.UserChatService;
 import bots.telegram.BarBot.utility.CommandResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +20,24 @@ import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class FallOffOperation extends CockOperation {
+public class DoubleOperation extends CockOperation {
     private final SendMessageService sendMessageService;
     private final UserChatService userChatService;
     private final ChatService chatService;
+    private final RecordEntityService recordEntityService;
+    private Message message;
     private UserChatDto dto;
     private ChatDto chatDto;
-    private Message message;
     private List<MessageEntity> messageEntityList;
 
     @Override
     public Stream<CommandResponse> executeOperation(Message message, UserChatDto dto, ChatDto chatDto) {
         initFields(message, dto, chatDto);
-        updateUserAndGroup();
+        updateUser();
+        checkIfNewRecord();
         return Stream.of(makeResponseMessage());
     }
+
 
     private void initFields(Message message, UserChatDto dto, ChatDto chatDto) {
         this.message = message;
@@ -42,7 +46,7 @@ public class FallOffOperation extends CockOperation {
         messageEntityList = new ArrayList<>();
     }
 
-    private void updateUserAndGroup() {
+    private void updateUser() {
         updateTotalCockSize();
         updateUserCockAndDate();
     }
@@ -52,7 +56,7 @@ public class FallOffOperation extends CockOperation {
                 .id(chatDto.id())
                 .title(chatDto.title())
                 .type(chatDto.type())
-                .totalCockSize(chatDto.totalCockSize() - dto.cockSize())
+                .totalCockSize(chatDto.totalCockSize() + dto.cockSize())
                 .build());
     }
 
@@ -60,10 +64,17 @@ public class FallOffOperation extends CockOperation {
         dto = userChatService.save(UserChatDto.builder()
                 .userId(dto.userId())
                 .groupId(dto.groupId())
-                .cockSize(0)
+                .cockSize(dto.cockSize() * 2)
                 .lastCockUpdate(LocalDate.now())
                 .nickname(dto.nickname())
                 .build());
+    }
+
+    private void checkIfNewRecord() {
+        var record = recordEntityService.getRecordEntity();
+        if (record.getSize() < dto.cockSize()) {
+            recordEntityService.saveNewRecord(dto);
+        }
     }
 
     private CommandResponse makeResponseMessage() {
@@ -74,7 +85,7 @@ public class FallOffOperation extends CockOperation {
     }
 
     private String buildTextWithUserData() {
-        return "%s, твой песюн видвалився!\nТеперь его длина 0 см."
-                .formatted(dto.nickname());
+        return "%s, твой песюн вирос в 2 раза.\nТеперь его длина %d см."
+                .formatted(dto.nickname(), dto.cockSize());
     }
 }

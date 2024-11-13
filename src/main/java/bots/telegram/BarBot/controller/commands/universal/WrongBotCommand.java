@@ -1,6 +1,6 @@
-package bots.telegram.BarBot.controller.botcommands.universal;
+package bots.telegram.BarBot.controller.commands.universal;
 
-import bots.telegram.BarBot.controller.botcommands.BarBotCommand;
+import bots.telegram.BarBot.controller.commands.BarBotCommand;
 import bots.telegram.BarBot.service.SendMessageService;
 import bots.telegram.BarBot.utility.CommandResponse;
 import bots.telegram.BarBot.utility.TextResponses;

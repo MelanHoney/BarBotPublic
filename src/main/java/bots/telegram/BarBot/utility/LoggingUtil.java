@@ -16,7 +16,7 @@ public class LoggingUtil {
     }
 
     public static void logMessageNotFromChat(Message message) {
-        log.info("Bot not group message received: {}. From: {} ,id={}. Chat: {}, id={}, type={}",
+        log.info("Not group message received: {}. From: {} ,id={}. Chat: {}, id={}, type={}",
                 message.getText(),
                 message.getFrom().getUserName(),
                 message.getFrom().getId(),

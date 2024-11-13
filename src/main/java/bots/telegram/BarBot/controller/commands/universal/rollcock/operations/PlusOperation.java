@@ -1,4 +1,4 @@
-package bots.telegram.BarBot.controller.botcommands.universal.rollcock.operations;
+package bots.telegram.BarBot.controller.commands.universal.rollcock.operations;
 
 import bots.telegram.BarBot.dto.ChatDto;
 import bots.telegram.BarBot.dto.UserChatDto;
@@ -16,28 +16,30 @@ import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class DoubleOperation extends CockOperation {
+public class PlusOperation extends CockOperation {
     private final SendMessageService sendMessageService;
     private final UserChatService userChatService;
     private final ChatService chatService;
     private final RecordEntityService recordEntityService;
     private Message message;
+    private List<MessageEntity> messageEntityList;
     private UserChatDto dto;
     private ChatDto chatDto;
-    private List<MessageEntity> messageEntityList;
+    private int randomAddedSize;
+
 
     @Override
     public Stream<CommandResponse> executeOperation(Message message, UserChatDto dto, ChatDto chatDto) {
         initFields(message, dto, chatDto);
-        updateUser();
+        rollAndUpdateUserAndGroup();
         checkIfNewRecord();
         return Stream.of(makeResponseMessage());
     }
-
 
     private void initFields(Message message, UserChatDto dto, ChatDto chatDto) {
         this.message = message;
@@ -46,27 +48,33 @@ public class DoubleOperation extends CockOperation {
         messageEntityList = new ArrayList<>();
     }
 
-    private void updateUser() {
+    private void rollAndUpdateUserAndGroup() {
+        randomAddedSize = randomIntBetweenFiveAndThirty();
         updateTotalCockSize();
-        updateUserCockAndDate();
+        updateCockSizeAndLastUpdate(dto.cockSize() + randomAddedSize);
+    }
+
+    private int randomIntBetweenFiveAndThirty() {
+        Random size = new Random();
+        return size.nextInt(5, 30);
     }
 
     private void updateTotalCockSize() {
         chatService.save(ChatDto.builder()
-                .id(chatDto.id())
-                .title(chatDto.title())
-                .type(chatDto.type())
-                .totalCockSize(chatDto.totalCockSize() + dto.cockSize())
+                        .id(chatDto.id())
+                        .title(chatDto.title())
+                        .type(chatDto.type())
+                        .totalCockSize(chatDto.totalCockSize() + randomAddedSize)
                 .build());
     }
 
-    private void updateUserCockAndDate() {
+    private void updateCockSizeAndLastUpdate(int newSize) {
         dto = userChatService.save(UserChatDto.builder()
-                .userId(dto.userId())
-                .groupId(dto.groupId())
-                .cockSize(dto.cockSize() * 2)
-                .lastCockUpdate(LocalDate.now())
-                .nickname(dto.nickname())
+                        .userId(dto.userId())
+                        .groupId(dto.groupId())
+                        .cockSize(newSize)
+                        .lastCockUpdate(LocalDate.now())
+                        .nickname(dto.nickname())
                 .build());
     }
 
@@ -85,7 +93,7 @@ public class DoubleOperation extends CockOperation {
     }
 
     private String buildTextWithUserData() {
-        return "%s, твой песюн вирос в 2 раза.\nТеперь его длина %d см."
-                .formatted(dto.nickname(), dto.cockSize());
+        return "%s, твой песюн вирос на %d см.\nТеперь его длина %d см."
+                        .formatted(dto.nickname(), randomAddedSize, dto.cockSize());
     }
 }

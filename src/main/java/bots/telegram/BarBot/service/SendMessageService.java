@@ -16,7 +16,6 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class SendMessageService {
-    private final UserChatService userChatService;
 
     public SendMessage prepareMessage(Long chatId, String text, List<MessageEntity> messageEntities) {
         return SendMessage.builder()
@@ -27,20 +26,9 @@ public class SendMessageService {
     }
 
     public SendMessage prepareMessage(Long chatId, String text) {
-        SendMessage message = new SendMessage();
-        message.setText(text);
-        message.setChatId(chatId);
-        return message;
-    }
-
-    public MessageEntity makeUserTextMention(int offset, Message message) {
-        var userGroup = userChatService.findById(message.getFrom().getId(), message.getChatId());
-
-        return MessageEntity.builder()
-                .type(EntityType.TEXTMENTION)
-                .offset(offset)
-                .length(userGroup.nickname().length())
-                .user(message.getFrom())
+        return SendMessage.builder()
+                .chatId(chatId)
+                .text(text)
                 .build();
     }
 
